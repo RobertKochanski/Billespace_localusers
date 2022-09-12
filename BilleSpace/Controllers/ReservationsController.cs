@@ -23,7 +23,6 @@ namespace BilleSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> PostReservation(ManageReservationCommand command)
         {
-            command.UserNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var result = _mediator.Send(command);
             return await result.Process();
         }
@@ -32,7 +31,6 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> PutReservation([FromRoute]Guid id, ManageReservationCommand command)
         {
             command.Id = id;
-            command.UserNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var result = _mediator.Send(command);
             return await result.Process();
         }

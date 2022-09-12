@@ -16,8 +16,14 @@ namespace BilleSpace.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(ManageUserCommand command)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterUserCommand command)
+        {
+            return await _mediator.Send(command).Process();
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginUserCommand command)
         {
             return await _mediator.Send(command).Process();
         }

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using BilleSpace.Domain.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
 
 namespace BilleSpace
 {
@@ -57,6 +58,12 @@ namespace BilleSpace
             builder.Services.AddMediatR(typeof(ManageOfficeCommandHandler));
             builder.Services.AddMediatR(typeof(LoadReservationsQueryHandler));
             builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("OnlyReceptionists", policy =>
+                    policy.RequireClaim(ClaimTypes.Role, "True"));
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

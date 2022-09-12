@@ -34,6 +34,7 @@ namespace BilleSpace.Controllers
             return await result.Process();
         }
 
+        [Authorize(Policy = "OnlyReceptionists")]
         [HttpPost]
         public async Task<IActionResult> Post(ManageOfficeCommand command)
         {
@@ -41,6 +42,7 @@ namespace BilleSpace.Controllers
             return await _mediator.Send(command).Process();
         }
 
+        [Authorize(Policy = "OnlyReceptionists")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, ManageOfficeCommand command)
         {
@@ -48,10 +50,10 @@ namespace BilleSpace.Controllers
             return await _mediator.Send(command).Process();
         }
 
+        [Authorize(Policy = "OnlyReceptionists")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-
             return Ok(await _mediator.Send(new DeleteOfficeCommand(id, User.FindFirst(ClaimTypes.NameIdentifier).Value)));
         }
     }

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BilleSpace.Domain.Commands
 {
-    public class ManageUserCommand : IRequest<Result<string>>
+    public class RegisterUserCommand : IRequest<Result<string>>
     {
         public string FullName { get; set; }
         public string Email { get; set; }
@@ -18,22 +18,20 @@ namespace BilleSpace.Domain.Commands
         public bool IsReceptionist { get; set; }
     }
 
-    public class ManageUserCommandHandler : IRequestHandler<ManageUserCommand, Result<string>>
+    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<string>>
     {
-        private readonly BilleSpaceDbContext _context;
         private readonly ITokenGenerator _token;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<ManageUserCommandHandler> _logger;
+        private readonly ILogger<RegisterUserCommandHandler> _logger;
 
-        public ManageUserCommandHandler(BilleSpaceDbContext context, ILogger<ManageUserCommandHandler> logger, UserManager<User> userManager, ITokenGenerator token)
+        public RegisterUserCommandHandler(ILogger<RegisterUserCommandHandler> logger, UserManager<User> userManager, ITokenGenerator token)
         {
-            _context = context;
             _token = token;
             _userManager = userManager;
             _logger = logger;
         }
 
-        public async Task<Result<string>> Handle(ManageUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.PhoneNumber))
             {
