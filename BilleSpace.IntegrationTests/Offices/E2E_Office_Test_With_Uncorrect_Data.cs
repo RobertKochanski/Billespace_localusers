@@ -7,7 +7,7 @@ using BilleSpace.Domain.Results;
 using BilleSpace.Domain.Commands;
 
 // office ogólnie, po id, delete, edycja
-namespace BilleSpace.IntegrationTests.E2E_Office_Test
+namespace BilleSpace.IntegrationTests.Offices
 {
     [Category("E2E_Office_Test")]
     public class E2E_Office_Test_With_UnCorrect_Data : Setup
@@ -97,8 +97,9 @@ namespace BilleSpace.IntegrationTests.E2E_Office_Test
                 City = city.Name,
                 Address = "Warszawa",
                 PostCode = "Olsztyn",
-                OfficeZones = new List<OfficeZoneModel> {
-                    
+                OfficeZones = new List<OfficeZoneModel>
+                {
+
                 },
                 ParkingZones = new List<ParkingZoneModel>(),
                 OfficeMap = null,

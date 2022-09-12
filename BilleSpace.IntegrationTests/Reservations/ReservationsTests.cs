@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 
 
-namespace BilleSpace.IntegrationTests.ReservationTests
+namespace BilleSpace.IntegrationTests.Reservations
 {
     public class ReservationTests : Setup
     {

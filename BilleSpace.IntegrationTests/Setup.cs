@@ -74,9 +74,6 @@ namespace BilleSpace.IntegrationTests
             City city = new City() { Id = Guid.Parse("30bad866-aadf-4cac-9195-74b5874b6876"), Name = "Olsztyn", Country = country };
             appContext.Cities.Add(city);
 
-            Receptionist receptionist = new Receptionist() { UserNameIdentifier = "Zdzisiek" };
-            appContext.Receptionists.Add(receptionist);
-
             appContext.Offices.Add(new Office()
             {
                 Id = Guid.Parse("e15ff775-3a89-4f0e-a037-78bf1c7b0d8c"),

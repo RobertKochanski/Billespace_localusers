@@ -9,10 +9,8 @@ using System.Security.Claims;
 
 namespace BilleSpace.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class ReservationsController : ControllerBase
     {
         private readonly IMediator _mediator;

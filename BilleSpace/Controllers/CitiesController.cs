@@ -7,10 +7,8 @@ using Microsoft.Identity.Web.Resource;
 
 namespace BilleSpace.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class CitiesController : ControllerBase
     {
         private readonly IMediator _mediator;

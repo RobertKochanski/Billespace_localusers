@@ -1,5 +1,4 @@
-﻿using BilleSpace.Authorization;
-using BilleSpace.Domain.Commands;
+﻿using BilleSpace.Domain.Commands;
 using BilleSpace.Domain.Queries;
 using BilleSpace.Extensions;
 using MediatR;
@@ -10,10 +9,8 @@ using System.Security.Claims;
 
 namespace BilleSpace.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class OfficesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -37,7 +34,6 @@ namespace BilleSpace.Controllers
             return await result.Process();
         }
 
-        [OnlyReceptionist]
         [HttpPost]
         public async Task<IActionResult> Post(ManageOfficeCommand command)
         {
@@ -46,7 +42,6 @@ namespace BilleSpace.Controllers
             return await _mediator.Send(command).Process();
         }
 
-        [OnlyReceptionist]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, ManageOfficeCommand command)
         {
@@ -55,7 +50,6 @@ namespace BilleSpace.Controllers
             return await _mediator.Send(command).Process();
         }
 
-        [OnlyReceptionist]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

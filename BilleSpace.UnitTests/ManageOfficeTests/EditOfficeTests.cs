@@ -15,7 +15,7 @@ namespace BilleSpace.UnitTests.ManageOfficeTests
             var options = new DbContextOptionsBuilder<BilleSpaceDbContext>()
                 .UseInMemoryDatabase("InMemoryDbToTest")
                 .Options;
-            var databaseContext = new BilleSpaceDbContext(options);
+            var databaseContext = new BilleSpaceDbContext(options, null);
             databaseContext.Database.EnsureCreated();
 
             return databaseContext;

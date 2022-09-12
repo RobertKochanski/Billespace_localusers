@@ -14,7 +14,7 @@ namespace BilleSpace.UnitTests.ReservationTests
             var options = new DbContextOptionsBuilder<BilleSpaceDbContext>()
             .UseInMemoryDatabase("InMemoryDatabase")
             .Options;
-            var databaseContext = new BilleSpaceDbContext(options);
+            var databaseContext = new BilleSpaceDbContext(options, null);
             databaseContext.Database.EnsureCreated();
 
             return databaseContext;

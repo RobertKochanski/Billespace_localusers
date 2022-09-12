@@ -7,7 +7,7 @@ using BilleSpace.Domain.Results;
 using BilleSpace.Domain.Commands;
 
 // office ogólnie, po id, delete, edycja
-namespace BilleSpace.IntegrationTests.E2E_Office_Test
+namespace BilleSpace.IntegrationTests.Offices
 {
     [Category("E2E_Office_Test")]
     public class E2E_Office_Test_With_Correct_Data : Setup
@@ -116,7 +116,7 @@ namespace BilleSpace.IntegrationTests.E2E_Office_Test
             //del 
             var delresult = await _httpClient.DeleteAsync($"api/Offices/{updateResponse.Data.Id}");
 
-            
+
             //assert
 
             //add
@@ -127,7 +127,7 @@ namespace BilleSpace.IntegrationTests.E2E_Office_Test
 
             //getAllOffices
             Assert.That(getOffices.IsSuccessStatusCode, Is.True);
-            Assert.That(getOfficesResponse.Code, Is.EqualTo(200));            
+            Assert.That(getOfficesResponse.Code, Is.EqualTo(200));
             Assert.That(getOfficesResponse.Errors, Is.Null);
 
             //getOfficeById
