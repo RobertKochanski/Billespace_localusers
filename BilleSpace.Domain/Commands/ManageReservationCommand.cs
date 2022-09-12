@@ -79,7 +79,6 @@ namespace BilleSpace.Domain.Commands
                     OfficeZoneId = request.OfficeZoneId,
                     OfficeZone = officeZone,
                     ParkingZone = parkingZone,
-                    UserNameIdentifier = request.UserNameIdentifier,
                     OfficeDesk = request.OfficeDesk,
                     ParkingSpace = request.ParkingSpace
                 };
@@ -132,7 +131,6 @@ namespace BilleSpace.Domain.Commands
                 reservation.OfficeZone = officeZone;
                 reservation.ParkingZoneId = request.OfficeZoneId;
                 reservation.ParkingZone = parkingZone;
-                reservation.UserNameIdentifier = request.UserNameIdentifier;
 
                 try
                 {

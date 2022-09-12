@@ -4,11 +4,11 @@ using BilleSpace.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 
 namespace BilleSpace.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase

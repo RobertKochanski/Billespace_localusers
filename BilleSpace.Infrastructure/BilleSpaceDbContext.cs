@@ -10,7 +10,6 @@ namespace BilleSpace.Infrastructure
     {
         public BilleSpaceDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
-            Database.EnsureCreated();
         }
 
         public DbSet<City> Cities { get; set; }

@@ -61,13 +61,6 @@ namespace BilleSpace.Domain.Commands
                     .Include(x => x.OfficeZones)
                     .Include(x => x.ParkingZones)
                     .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-                // Return error message if user is not office creator
-                if (office.AuthorNameIdentifier != request.AuthorNameIdentifier)
-                {
-                    _logger.LogError($"[{DateTime.UtcNow}] User with {request.AuthorNameIdentifier} Identifier can not edit this office!");
-                    return Result.Forbidden<OfficeModel>(new List<string>() { $"[{DateTime.UtcNow}] User with {request.AuthorNameIdentifier} Identifier can not edit this office!" });
-                }
             }
 
             // Validation
@@ -188,7 +181,6 @@ namespace BilleSpace.Domain.Commands
             office.Address = request.Address;
             office.PostCode = request.PostCode;
             office.OfficeMapUrl = request.OfficeMap;
-            office.AuthorNameIdentifier = request.AuthorNameIdentifier;
 
             // Save new office or edited changes
             if (isAdding)

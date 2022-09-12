@@ -4,11 +4,11 @@ using BilleSpace.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 
 namespace BilleSpace.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OfficesController : ControllerBase
@@ -38,7 +38,6 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> Post(ManageOfficeCommand command)
         {
             command.Id = Guid.Empty;
-            command.AuthorNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return await _mediator.Send(command).Process();
         }
 
@@ -46,7 +45,6 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> Put(Guid id, ManageOfficeCommand command)
         {
             command.Id = id;
-            command.AuthorNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return await _mediator.Send(command).Process();
         }
 

@@ -16,6 +16,6 @@
         public ParkingZone? ParkingZone { get; set; }
         public string? ParkingSpace { get; set; }
 
-        public string UserNameIdentifier { get; set; }
+        public string UserId { get; set; }
     }
 }

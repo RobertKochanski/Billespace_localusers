@@ -15,6 +15,6 @@
         public List<OfficeZone> OfficeZones { get; set; } = new List<OfficeZone>();
         public List<ParkingZone>? ParkingZones { get; set; } = new List<ParkingZone>();
 
-        public string AuthorNameIdentifier { get; set; }
+        public User Creator { get; set; }
     }
 }

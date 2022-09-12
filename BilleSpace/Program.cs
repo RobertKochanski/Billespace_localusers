@@ -1,12 +1,16 @@
 using BilleSpace.Infrastructure;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using BilleSpace.Domain.Commands;
 using BilleSpace.Domain.Queries;
 using Microsoft.AspNetCore.Identity;
 using BilleSpace.Infrastructure.Entities;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
+using BilleSpace.Domain.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BilleSpace
 {
@@ -17,6 +21,9 @@ namespace BilleSpace
             var builder = WebApplication.CreateBuilder(args);
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
+
+            var tokenKey = builder.Configuration.GetValue<string>("TokenKey");
+            char[] tokenKeyArray = tokenKey.ToCharArray();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<BilleSpaceDbContext>(options =>
@@ -30,15 +37,59 @@ namespace BilleSpace
                 .AddApiAuthorization<User, BilleSpaceDbContext>()
                 .AddDeveloperSigningCredential();
 
+            var authenticationSettings = new AuthenticationSettings();
+            builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+            builder.Services.AddSingleton(authenticationSettings);
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKeyArray)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                    };
+                });
+
             // Add services to the container.      
 
             builder.Services.AddMediatR(typeof(ManageOfficeCommandHandler));
             builder.Services.AddMediatR(typeof(LoadReservationsQueryHandler));
+            builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+                c.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme.",
+                        Name = "Authorization",
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer",
+                            },
+                        },
+                        new string[] { }
+                    },
+                });
+            });
 
             builder.Services.AddCors(options => { 
                 options.AddPolicy("front", builder => { 
@@ -56,6 +107,7 @@ namespace BilleSpace
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
+            app.UseIdentityServer();
             app.UseAuthorization();
 
             // Configure the HTTP request pipeline.

@@ -44,27 +44,17 @@ namespace BilleSpace.Domain.Commands
                 _logger.LogInformation($"[{DateTime.UtcNow}] Office given id doesn't exist.");
                 return Result.NotFound(request.Id);
             }
-
-            if (office.AuthorNameIdentifier == request.UserNameIdentifier)
+                       
+            try
             {
-                try
-                {
-                    _dbContext.Offices.Remove(office);
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogInformation($"[{DateTime.UtcNow}] Office with {office.Id} was removed.");
-                    return Result.BadRequest<OfficeModel>(new List<string>() { $"Error occurred while saving changes to database." });
-                }
-
+                _dbContext.Offices.Remove(office);
+                await _dbContext.SaveChangesAsync();
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogInformation($"[{DateTime.UtcNow}] you're not authorized to delete offices");
-                return Result.BadRequest<OfficeModel>(errorMessageS);
+                _logger.LogInformation($"[{DateTime.UtcNow}] Office with {office.Id} was removed.");
+                return Result.BadRequest<OfficeModel>(new List<string>() { $"Error occurred while saving changes to database." });
             }
-
 
             return Result.Ok();
         }
