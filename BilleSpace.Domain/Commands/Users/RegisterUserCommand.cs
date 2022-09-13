@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace BilleSpace.Domain.Commands
+namespace BilleSpace.Domain.Commands.Users
 {
     public class RegisterUserCommand : IRequest<Result<string>>
     {
@@ -57,7 +57,7 @@ namespace BilleSpace.Domain.Commands
 
             var token = _token.CreateToken(user);
 
-            return Result.Ok<string>(token);
+            return Result.Ok(token);
         }
     }
 }

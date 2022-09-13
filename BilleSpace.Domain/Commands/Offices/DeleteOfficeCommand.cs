@@ -6,12 +6,13 @@ using Microsoft.Extensions.Logging;
 using BilleSpace.Infrastructure.Models;
 using BilleSpace.Domain.Results;
 
-namespace BilleSpace.Domain.Commands
+namespace BilleSpace.Domain.Commands.Offices
 {
     public class DeleteOfficeCommand : IRequest<Result>
     {
         [JsonIgnore]
         public Guid Id { get; set; }
+        [JsonIgnore]
         public string CreatorId { get; set; }
 
         public DeleteOfficeCommand(Guid id, string creatorId)

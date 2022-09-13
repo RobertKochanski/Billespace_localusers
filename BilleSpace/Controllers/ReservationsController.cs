@@ -1,4 +1,5 @@
 ﻿using BilleSpace.Domain.Commands;
+using BilleSpace.Domain.Commands.Reservations;
 using BilleSpace.Domain.Queries;
 using BilleSpace.Extensions;
 using MediatR;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BilleSpace.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
@@ -22,6 +23,8 @@ namespace BilleSpace.Controllers
         [HttpPost]
         public async Task<IActionResult> PostReservation(ManageReservationCommand command)
         {
+            command.Id = Guid.Empty;
+            command.UserId = User.Identity.Name;
             var result = _mediator.Send(command);
             return await result.Process();
         }
@@ -30,6 +33,7 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> PutReservation([FromRoute]Guid id, ManageReservationCommand command)
         {
             command.Id = id;
+            command.UserId = User.Identity.Name;
             var result = _mediator.Send(command);
             return await result.Process();
         }
@@ -37,13 +41,14 @@ namespace BilleSpace.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservation(Guid id)
         {
-            var result = _mediator.Send(new DeleteReservationCommand(id));
+            var result = _mediator.Send(new DeleteReservationCommand(id, User.Identity.Name));
             return await result.Process();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetReservations([FromQuery] LoadReservationsQuery query)
         {
+            query.UserId = User.Identity.Name;
             var result = _mediator.Send(query);
             return await result.Process();
         }

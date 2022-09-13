@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
 
-namespace BilleSpace.Domain.Commands
+namespace BilleSpace.Domain.Commands.Reservations
 {
     public class ManageReservationCommand : IRequest<Result<ReservationModel>>
     {
@@ -20,7 +20,8 @@ namespace BilleSpace.Domain.Commands
         public DateTime Date { get; set; }
         public string OfficeDesk { get; set; }
         public string? ParkingSpace { get; set; }
-        public string UserNameIdentifier { get; set; }
+        [JsonIgnore]
+        public string? UserId { get; set; }
     }
 
     public class MakeReservationCommandHandler : IRequestHandler<ManageReservationCommand, Result<ReservationModel>>
@@ -40,13 +41,19 @@ namespace BilleSpace.Domain.Commands
             var isAdding = request.Id == Guid.Empty;
             Reservation? reservation = null;
 
-            var office = await GetOfficeAsync(request.OfficeId);
-            var officeZone = await GetOfficeZoneAsync(request.OfficeZoneId);
+            var office = await _dbContext.Offices
+                .Include(cit => cit.City)
+                    .ThenInclude(cou => cou.Country)
+                .Include(ofz => ofz.OfficeZones)
+                .Include(par => par.ParkingZones)
+                .FirstOrDefaultAsync(off => off.Id == request.OfficeId);
+
+            var officeZone = await _dbContext.OfficeZones.FirstOrDefaultAsync(x => x.Id == request.OfficeZoneId);
 
             ParkingZone? parkingZone = null;
             if (request.ParkingZoneId != null)
             {
-                parkingZone = await GetParkingZoneAsync(request.ParkingZoneId);
+                parkingZone = await _dbContext.ParkingZones.FirstOrDefaultAsync(x => x.Id == request.ParkingZoneId);
             }
 
             var errorMessages = new List<string>();
@@ -74,13 +81,12 @@ namespace BilleSpace.Domain.Commands
                 reservation = new Reservation()
                 {
                     Date = request.Date,
-                    OfficeId = request.OfficeId,
                     Office = office,
-                    OfficeZoneId = request.OfficeZoneId,
                     OfficeZone = officeZone,
                     ParkingZone = parkingZone,
                     OfficeDesk = request.OfficeDesk,
-                    ParkingSpace = request.ParkingSpace
+                    ParkingSpace = request.ParkingSpace,
+                    UserId = request.UserId,
                 };
 
                 if (request.ParkingZoneId != null)
@@ -124,13 +130,18 @@ namespace BilleSpace.Domain.Commands
                     return Result.BadRequest<ReservationModel>(new List<string>() { $"Reservation with id: {request.Id} does not exist." });
                 }
 
+                if (reservation.UserId != request.UserId)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow}] User with {request.UserId} Id can not edit this reservation!");
+                    return Result.Forbidden<ReservationModel>(new List<string>() { $"[{DateTime.UtcNow}] User with {request.UserId} Id can not edit this reservation!" });
+                }
+
                 reservation.Date = request.Date;
-                reservation.OfficeId = request.OfficeId;
                 reservation.Office = office;
-                reservation.OfficeZoneId = request.OfficeZoneId;
                 reservation.OfficeZone = officeZone;
-                reservation.ParkingZoneId = request.OfficeZoneId;
+                reservation.OfficeDesk = request.OfficeDesk;
                 reservation.ParkingZone = parkingZone;
+                reservation.ParkingSpace = request.ParkingSpace;
 
                 try
                 {
@@ -198,26 +209,6 @@ namespace BilleSpace.Domain.Commands
             };
 
             return Result.Ok(model);
-        }
-
-        private async Task<Office> GetOfficeAsync(Guid OfficeId)
-        {
-            return await _dbContext.Offices
-                .Include(cit => cit.City)
-                    .ThenInclude(cou => cou.Country)
-                .FirstOrDefaultAsync(off => off.Id == OfficeId);
-        }
-
-        private async Task<OfficeZone> GetOfficeZoneAsync(Guid OfficeZoneId)
-        {
-            return await _dbContext.OfficeZones
-                .FirstOrDefaultAsync(off => off.Id == OfficeZoneId);
-        }
-
-        private async Task<ParkingZone> GetParkingZoneAsync(Guid? ParkingZoneId)
-        {
-            return await _dbContext.ParkingZones
-                .FirstOrDefaultAsync(par => par.Id == ParkingZoneId);
         }
     }
 }

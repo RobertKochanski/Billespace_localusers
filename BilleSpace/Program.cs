@@ -1,7 +1,6 @@
 using BilleSpace.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using BilleSpace.Domain.Commands;
 using BilleSpace.Domain.Queries;
 using Microsoft.AspNetCore.Identity;
 using BilleSpace.Infrastructure.Entities;
@@ -11,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using BilleSpace.Domain.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
+using BilleSpace.Domain.Commands.Offices;
 
 namespace BilleSpace
 {

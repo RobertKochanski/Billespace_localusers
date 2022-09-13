@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Serialization;
 
-namespace BilleSpace.Domain.Commands
+namespace BilleSpace.Domain.Commands.Offices
 {
     public class ManageOfficeCommand : IRequest<Result<OfficeModel>>
     {

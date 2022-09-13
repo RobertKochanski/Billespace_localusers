@@ -1,4 +1,4 @@
-﻿using BilleSpace.Domain.Commands;
+﻿using BilleSpace.Domain.Commands.Users;
 using BilleSpace.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

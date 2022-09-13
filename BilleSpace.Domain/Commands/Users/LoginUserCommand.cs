@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace BilleSpace.Domain.Commands
+namespace BilleSpace.Domain.Commands.Users
 {
     public class LoginUserCommand : IRequest<Result<string>>
     {
@@ -36,7 +36,7 @@ namespace BilleSpace.Domain.Commands
                 return Result.BadRequest<string>(new List<string> { $"[{DateTime.UtcNow}] Can not find user with Email {request.Email}" });
             }
 
-            if (await _userManager.CheckPasswordAsync(user, request.Password))
+            if (!await _userManager.CheckPasswordAsync(user, request.Password))
             {
                 _logger.LogError($"[{DateTime.UtcNow}] Wrong email or password!");
                 return Result.BadRequest<string>(new List<string> { $"[{DateTime.UtcNow}] Wrong email or password!" });
@@ -44,7 +44,7 @@ namespace BilleSpace.Domain.Commands
 
             var token = _token.CreateToken(user);
 
-            return Result.Ok<string>(token);
+            return Result.Ok(token);
         }
     }
 }

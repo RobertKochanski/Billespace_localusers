@@ -3,16 +3,22 @@ using BilleSpace.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
-namespace BilleSpace.Domain.Commands
+namespace BilleSpace.Domain.Commands.Reservations
 {
     public class DeleteReservationCommand : IRequest<Result>
     {
-        public DeleteReservationCommand(Guid id)
+        [JsonIgnore]
+        public Guid Id { get; set; }
+        [JsonIgnore]
+        public string UserId { get; set; }
+
+        public DeleteReservationCommand(Guid id, string userId)
         {
             Id = id;
+            UserId = userId;
         }
-        public Guid Id { get; set; }
     }
 
     public class DeleteReservationCommandHandler : IRequestHandler<DeleteReservationCommand, Result>
@@ -35,6 +41,12 @@ namespace BilleSpace.Domain.Commands
             {
                 _logger.LogError($"[{DateTime.UtcNow}] Can't find reservation (id: {request.Id}).");
                 return Result.NotFound(request.Id);
+            }
+
+            if (reservation.UserId != request.UserId)
+            {
+                _logger.LogError($"[{DateTime.UtcNow}] Can not delete not your booking!");
+                return Result.BadRequest($"[{DateTime.UtcNow}] Can not delete not your booking!");
             }
 
             try

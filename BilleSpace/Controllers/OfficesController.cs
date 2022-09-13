@@ -1,4 +1,4 @@
-﻿using BilleSpace.Domain.Commands;
+﻿using BilleSpace.Domain.Commands.Offices;
 using BilleSpace.Domain.Queries;
 using BilleSpace.Extensions;
 using MediatR;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BilleSpace.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OfficesController : ControllerBase
@@ -33,7 +33,7 @@ namespace BilleSpace.Controllers
             return await result.Process();
         }
 
-        [Authorize(Policy = "OnlyReceptionists")]
+        //[Authorize(Policy = "OnlyReceptionists")]
         [HttpPost]
         public async Task<IActionResult> Post(ManageOfficeCommand command)
         {
@@ -42,7 +42,7 @@ namespace BilleSpace.Controllers
             return await _mediator.Send(command).Process();
         }
 
-        [Authorize(Policy = "OnlyReceptionists")]
+        //[Authorize(Policy = "OnlyReceptionists")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, ManageOfficeCommand command)
         {
@@ -51,7 +51,7 @@ namespace BilleSpace.Controllers
             return await _mediator.Send(command).Process();
         }
 
-        [Authorize(Policy = "OnlyReceptionists")]
+        //[Authorize(Policy = "OnlyReceptionists")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

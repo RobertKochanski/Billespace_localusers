@@ -4,11 +4,14 @@ using BilleSpace.Infrastructure.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
 namespace BilleSpace.Domain.Queries
 {
     public class LoadReservationsQuery : IRequest<Result<List<ReservationModel>>>
     {
+        [JsonIgnore]
+        public string UserId { get; set; }
     }
 
     public class LoadReservationsQueryHandler : IRequestHandler<LoadReservationsQuery, Result<List<ReservationModel>>>
@@ -31,6 +34,7 @@ namespace BilleSpace.Domain.Queries
                         .ThenInclude(y => y.Country)
                 .Include(y => y.OfficeZone)
                 .Include(y => y.ParkingZone)
+                .Where(x => x.UserId == request.UserId)
                 .Select(z => new ReservationModel()
                 {
                     Id = z.Id,
