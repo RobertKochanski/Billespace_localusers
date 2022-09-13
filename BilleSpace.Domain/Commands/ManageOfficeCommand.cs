@@ -21,7 +21,7 @@ namespace BilleSpace.Domain.Commands
         public string? OfficeMap { get; set; }
 
         [JsonIgnore]
-        public string? AuthorNameIdentifier { get; set; }
+        public string? CreatorId { get; set; }
     }
 
     public class ManageOfficeCommandHandler : IRequestHandler<ManageOfficeCommand, Result<OfficeModel>>
@@ -60,7 +60,15 @@ namespace BilleSpace.Domain.Commands
                 office = await _dbContext.Offices
                     .Include(x => x.OfficeZones)
                     .Include(x => x.ParkingZones)
+                    .Include(x => x.Creator)
                     .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+
+                // Return error message if user is not office creator
+                if (office.Creator.Id != request.CreatorId)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow}] User with {request.CreatorId} Id can not edit this office!");
+                    return Result.Forbidden<OfficeModel>(new List<string>() { $"[{DateTime.UtcNow}] User with {request.CreatorId} Id can not edit this office!" });
+                }
             }
 
             // Validation
@@ -181,17 +189,18 @@ namespace BilleSpace.Domain.Commands
             office.Address = request.Address;
             office.PostCode = request.PostCode;
             office.OfficeMapUrl = request.OfficeMap;
+            office.Creator = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == request.CreatorId);
 
             // Save new office or edited changes
             if (isAdding)
             {
 
-                _logger.LogInformation($"[{DateTime.UtcNow}] Office created by user with {request.AuthorNameIdentifier} Id.");
+                _logger.LogInformation($"[{DateTime.UtcNow}] Office created by user with {request.CreatorId} Id.");
                 await _dbContext.Offices.AddAsync(office, cancellationToken);
             }
             else
             {
-                _logger.LogInformation($"[{DateTime.UtcNow}] Office changed by user with {request.AuthorNameIdentifier} Id.");
+                _logger.LogInformation($"[{DateTime.UtcNow}] Office changed by user with {request.CreatorId} Id.");
             }
 
             try

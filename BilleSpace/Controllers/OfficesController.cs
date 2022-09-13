@@ -4,7 +4,6 @@ using BilleSpace.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BilleSpace.Controllers
 {
@@ -39,6 +38,7 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> Post(ManageOfficeCommand command)
         {
             command.Id = Guid.Empty;
+            command.CreatorId = User.Identity.Name;
             return await _mediator.Send(command).Process();
         }
 
@@ -47,6 +47,7 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> Put(Guid id, ManageOfficeCommand command)
         {
             command.Id = id;
+            command.CreatorId = User.Identity.Name;
             return await _mediator.Send(command).Process();
         }
 
@@ -54,7 +55,7 @@ namespace BilleSpace.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return Ok(await _mediator.Send(new DeleteOfficeCommand(id, User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+            return await _mediator.Send(new DeleteOfficeCommand(id, User.Identity.Name)).Process();
         }
     }
 }

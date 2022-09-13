@@ -4,7 +4,6 @@ using BilleSpace.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BilleSpace.Controllers
 {

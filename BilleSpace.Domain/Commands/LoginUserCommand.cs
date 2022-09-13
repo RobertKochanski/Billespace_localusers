@@ -1,15 +1,9 @@
 ﻿using BilleSpace.Domain.Authentication;
 using BilleSpace.Domain.Results;
-using BilleSpace.Infrastructure;
 using BilleSpace.Infrastructure.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BilleSpace.Domain.Commands
 {
@@ -42,7 +36,11 @@ namespace BilleSpace.Domain.Commands
                 return Result.BadRequest<string>(new List<string> { $"[{DateTime.UtcNow}] Can not find user with Email {request.Email}" });
             }
 
-            // password check
+            if (await _userManager.CheckPasswordAsync(user, request.Password))
+            {
+                _logger.LogError($"[{DateTime.UtcNow}] Wrong email or password!");
+                return Result.BadRequest<string>(new List<string> { $"[{DateTime.UtcNow}] Wrong email or password!" });
+            }
 
             var token = _token.CreateToken(user);
 

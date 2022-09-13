@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BilleSpace.Infrastructure.Migrations
 {
     [DbContext(typeof(BilleSpaceDbContext))]
-    [Migration("20220912091657_init")]
+    [Migration("20220913074331_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -201,6 +201,10 @@ namespace BilleSpace.Infrastructure.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsReceptionist")
                         .HasColumnType("bit");
@@ -559,16 +563,20 @@ namespace BilleSpace.Infrastructure.Migrations
 
             modelBuilder.Entity("BilleSpace.Infrastructure.Entities.OfficeZone", b =>
                 {
-                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", null)
+                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", "Office")
                         .WithMany("OfficeZones")
                         .HasForeignKey("OfficeId");
+
+                    b.Navigation("Office");
                 });
 
             modelBuilder.Entity("BilleSpace.Infrastructure.Entities.ParkingZone", b =>
                 {
-                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", null)
+                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", "Office")
                         .WithMany("ParkingZones")
                         .HasForeignKey("OfficeId");
+
+                    b.Navigation("Office");
                 });
 
             modelBuilder.Entity("BilleSpace.Infrastructure.Entities.Reservation", b =>

@@ -561,16 +561,20 @@ namespace BilleSpace.Infrastructure.Migrations
 
             modelBuilder.Entity("BilleSpace.Infrastructure.Entities.OfficeZone", b =>
                 {
-                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", null)
+                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", "Office")
                         .WithMany("OfficeZones")
                         .HasForeignKey("OfficeId");
+
+                    b.Navigation("Office");
                 });
 
             modelBuilder.Entity("BilleSpace.Infrastructure.Entities.ParkingZone", b =>
                 {
-                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", null)
+                    b.HasOne("BilleSpace.Infrastructure.Entities.Office", "Office")
                         .WithMany("ParkingZones")
                         .HasForeignKey("OfficeId");
+
+                    b.Navigation("Office");
                 });
 
             modelBuilder.Entity("BilleSpace.Infrastructure.Entities.Reservation", b =>

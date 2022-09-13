@@ -12,13 +12,12 @@ namespace BilleSpace.Domain.Commands
     {
         [JsonIgnore]
         public Guid Id { get; set; }
-        public string? AuthorNameIdentifier { get; set; }
-        public string UserNameIdentifier { get; set; }
+        public string CreatorId { get; set; }
 
-        public DeleteOfficeCommand(Guid id, string userNameIdentifier)
+        public DeleteOfficeCommand(Guid id, string creatorId)
         {
             Id = id;
-            UserNameIdentifier = userNameIdentifier;
+            CreatorId = creatorId;
         }
     }
     public class DeleteOfficeCommandHandler : IRequestHandler<DeleteOfficeCommand, Result>
@@ -35,29 +34,41 @@ namespace BilleSpace.Domain.Commands
 
         public async Task<Result> Handle(DeleteOfficeCommand request, CancellationToken cancellationToken)
         {
-            var office = await _dbContext.Offices.FirstOrDefaultAsync(x => x.Id == request.Id);
-            // Validation
-            List<string> errorMessageS = new List<string>();
+            var office = await _dbContext.Offices
+                .Include(x => x.OfficeZones)
+                .Include(x => x.ParkingZones)
+                .Include(x => x.Creator)
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
+            // Validation
             if (office == null)
             {
                 _logger.LogInformation($"[{DateTime.UtcNow}] Office given id doesn't exist.");
                 return Result.NotFound(request.Id);
             }
-                       
-            try
-            {
-                _dbContext.Offices.Remove(office);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInformation($"[{DateTime.UtcNow}] Office with {office.Id} was removed.");
-                return Result.BadRequest<OfficeModel>(new List<string>() { $"Error occurred while saving changes to database." });
-            }
 
-            return Result.Ok();
+            if (office.Creator.Id == request.CreatorId)
+            {
+                try
+                {
+                    _dbContext.OfficeZones.RemoveRange(office.OfficeZones);
+                    _dbContext.ParkingZones.RemoveRange(office.ParkingZones);
+                    _dbContext.Offices.Remove(office);
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                    return Result.Ok();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"[{DateTime.UtcNow}] Something goes wrong during saving changes in database.");
+                    _logger.LogError($"[{DateTime.UtcNow}] {ex.Message}");
+                    return Result.BadRequest<OfficeModel>(new List<string>() { $"Error occurred while saving changes to database." });
+                }
+            }
+            else
+            {
+                _logger.LogInformation($"[{DateTime.UtcNow}] You're not authorized to delete offices");
+                return Result.BadRequest<OfficeModel>(new List<string> { "You're not authorized to delete offices" });
+            }
         }
     }
-
 }

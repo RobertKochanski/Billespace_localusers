@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using BilleSpace.Infrastructure.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using BilleSpace.Domain.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
