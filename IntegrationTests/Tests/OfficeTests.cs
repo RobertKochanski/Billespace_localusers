@@ -2,11 +2,12 @@
 using BilleSpace.Domain.Results;
 using BilleSpace.Infrastructure.Entities;
 using BilleSpace.Infrastructure.Models;
+using IntegrationTests;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 
-namespace IntegrationTests
+namespace BilleSpace.IntegrationTests.Tests
 {
     public class OfficeTests : Setup
     {

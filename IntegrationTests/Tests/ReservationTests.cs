@@ -3,14 +3,10 @@ using BilleSpace.Domain.Results;
 using BilleSpace.Infrastructure.Models;
 using IntegrationTests;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace BilleSpace.IntegrationTests
+namespace BilleSpace.IntegrationTests.Tests
 {
     public class ReservationTests : Setup
     {
