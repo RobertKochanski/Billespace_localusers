@@ -194,18 +194,20 @@ namespace BilleSpace.Domain.Commands.Offices
             // Save new office or edited changes
             if (isAdding)
             {
-
-                _logger.LogInformation($"[{DateTime.UtcNow}] Office created by user with {request.CreatorId} Id.");
                 await _dbContext.Offices.AddAsync(office, cancellationToken);
             }
-            else
-            {
-                _logger.LogInformation($"[{DateTime.UtcNow}] Office changed by user with {request.CreatorId} Id.");
-            }
-
+            
             try
             {
                 await _dbContext.SaveChangesAsync(cancellationToken);
+                if (isAdding)
+                {
+                    _logger.LogInformation($"[{DateTime.UtcNow}] Office created by user with {request.CreatorId} Id.");
+                } 
+                else 
+                {
+                    _logger.LogInformation($"[{DateTime.UtcNow}] Office changed by user with {request.CreatorId} Id.");
+                }
             }
             catch (Exception ex)
             {

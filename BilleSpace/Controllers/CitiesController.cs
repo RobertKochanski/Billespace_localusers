@@ -1,4 +1,5 @@
-﻿using BilleSpace.Domain.Queries;
+﻿using BilleSpace.Domain.Commands.Cities;
+using BilleSpace.Domain.Queries;
 using BilleSpace.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,13 @@ namespace BilleSpace.Controllers
         public async Task<IActionResult> Get([FromQuery] LoadCitiesQuery query)
         {
             var result = _mediator.Send(query);
+            return await result.Process();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post(CreateCityCommand command)
+        {
+            var result = _mediator.Send(command);
             return await result.Process();
         }
     }
