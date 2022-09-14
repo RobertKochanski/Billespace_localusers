@@ -1,9 +1,7 @@
-﻿using BilleSpace.Domain.Commands;
-using BilleSpace.Domain.Commands.Reservations;
+﻿using BilleSpace.Domain.Commands.Reservations;
 using BilleSpace.Domain.Queries;
 using BilleSpace.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BilleSpace.Controllers
@@ -46,10 +44,9 @@ namespace BilleSpace.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetReservations([FromQuery] LoadReservationsQuery query)
+        public async Task<IActionResult> GetReservations()
         {
-            query.UserId = User.Identity.Name;
-            var result = _mediator.Send(query);
+            var result = _mediator.Send(new LoadReservationsQuery(User.Identity.Name));
             return await result.Process();
         }
 

@@ -2,7 +2,6 @@
 using BilleSpace.Domain.Queries;
 using BilleSpace.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BilleSpace.Controllers
@@ -29,7 +28,7 @@ namespace BilleSpace.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOffice(Guid id)
         {
-            var result = _mediator.Send(new LoadOfficeQuery(id));
+            var result = _mediator.Send(new LoadOfficeDetailsQuery(id));
             return await result.Process();
         }
 

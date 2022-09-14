@@ -1,12 +1,16 @@
-﻿using BilleSpace.Domain.Commands;
+﻿using BilleSpace.Domain.Commands.Reservations;
 using BilleSpace.Domain.Results;
 using BilleSpace.Infrastructure.Models;
+using IntegrationTests;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
-
-namespace BilleSpace.IntegrationTests.Reservations
+namespace BilleSpace.IntegrationTests
 {
     public class ReservationTests : Setup
     {
@@ -14,7 +18,7 @@ namespace BilleSpace.IntegrationTests.Reservations
         public async Task ReservationsController_Successfull()
         {
             // Arrange
-            AuthenticateAsync();
+            await AuthenticateAsync();
 
             // Act
             var responsePost = await _httpClient.PostAsync("api/reservations", new StringContent(
@@ -24,10 +28,10 @@ namespace BilleSpace.IntegrationTests.Reservations
                     Date = DateTime.Now,
                     OfficeDesk = "2",
                     ParkingSpace = "3",
-                    UserNameIdentifier = "Zdzisiek",
                     OfficeId = Guid.Parse("e15ff775-3a89-4f0e-a037-78bf1c7b0d8c"),
                     OfficeZoneId = Guid.Parse("b2a24a75-5b26-456a-aa1d-f02821be6d4a"),
-                    ParkingZoneId = Guid.Parse("c0988a2e-24f5-4a82-b4c2-3619f338a2eb")
+                    ParkingZoneId = Guid.Parse("c0988a2e-24f5-4a82-b4c2-3619f338a2eb"),
+                    UserId = "469f41f5-0b77-4b25-a158-ddec103f2aca"
                 }),
                 Encoding.UTF8,
                 "application/json")
@@ -80,7 +84,7 @@ namespace BilleSpace.IntegrationTests.Reservations
         public async Task POSTReservations_OfficeAndOfficeZoneNotExists_ReturnBadRequestResultWithErrorsList()
         {
             // Arrange
-            AuthenticateAsync();
+            await AuthenticateAsync();
 
             // Act
             var responsePost = await _httpClient.PostAsync("api/reservations", new StringContent(
@@ -90,10 +94,10 @@ namespace BilleSpace.IntegrationTests.Reservations
                     Date = DateTime.Now,
                     OfficeDesk = "2",
                     ParkingSpace = "3",
-                    UserNameIdentifier = "Zdzisiek",
                     OfficeId = Guid.Parse("de551601-f699-49ee-9f8a-073be249ddca"), // Not Exist
                     OfficeZoneId = Guid.Parse("a2558bdb-8f9e-42f8-a3ba-1bdf767608e1"), // Not Exist
-                    ParkingZoneId = Guid.Parse("c0988a2e-24f5-4a82-b4c2-3619f338a2eb")
+                    ParkingZoneId = Guid.Parse("c0988a2e-24f5-4a82-b4c2-3619f338a2eb"),
+                    UserId = "469f41f5-0b77-4b25-a158-ddec103f2aca"
                 }),
                 Encoding.UTF8,
                 "application/json")
@@ -112,7 +116,7 @@ namespace BilleSpace.IntegrationTests.Reservations
         public async Task DELETEReservations_ReservationNotExist_ReturnBadRequestResultWithErrorsList()
         {
             // Arrange
-            AuthenticateAsync();
+            await AuthenticateAsync();
 
             // Act
             var responsePost = await _httpClient.DeleteAsync("api/reservations/a2558bdb-8f9e-42f8-a3ba-1bdf767608e1");
@@ -128,7 +132,7 @@ namespace BilleSpace.IntegrationTests.Reservations
         public async Task GetByIdReservation_ReservationNotExist_ReturnBadRequestResultWithErrorsList()
         {
             // Arrange
-            AuthenticateAsync();
+            await AuthenticateAsync();
 
             // Act
             var responsePost = await _httpClient.GetAsync("api/reservations/a2558bdb-8f9e-42f8-a3ba-1bdf767608e1");

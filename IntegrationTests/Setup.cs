@@ -1,12 +1,15 @@
-﻿using BilleSpace.Infrastructure;
+
+using BilleSpace;
+using BilleSpace.Domain.Results;
+using BilleSpace.Infrastructure;
 using BilleSpace.Infrastructure.Entities;
-using Microsoft.AspNetCore.Authentication;
+using BilleSpace.Infrastructure.Models.User;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 
-namespace BilleSpace.IntegrationTests
+namespace IntegrationTests
 {
     public class Setup
     {
@@ -25,15 +28,13 @@ namespace BilleSpace.IntegrationTests
                         {
                             services.Remove(dbContext);
                         }
-
                         var serviceProvider = new ServiceCollection().AddEntityFrameworkInMemoryDatabase().BuildServiceProvider();
 
                         services.AddDbContext<BilleSpaceDbContext>(options =>
                         {
-                            options.UseInMemoryDatabase("InMemoryIntegrationTest");
+                            options.UseInMemoryDatabase("InMemoryEmployeeTest");
                             options.UseInternalServiceProvider(serviceProvider);
                         });
-
                         var sp = services.BuildServiceProvider();
 
                         using (var scope = sp.CreateScope())
@@ -51,19 +52,45 @@ namespace BilleSpace.IntegrationTests
                                 }
                             }
                         }
-
-                        services.AddAuthentication("Test")
-                            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
-                            "Test", options => { });
                     });
                 });
-
             _httpClient = webAppFactory.CreateDefaultClient();
         }
 
-        protected void AuthenticateAsync()
+        protected async Task AuthenticateAsync()
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetJwtAsync());
+        }
+
+        private async Task<string> GetJwtAsync()
+        {
+            var checkUser = await _httpClient.PostAsJsonAsync("api/users/login", new LoginUser
+            {
+                Email = "integration@test.com",
+                Password = "zaq1@WSX"
+            });
+
+            Result<string> registerResponse;
+
+            if (!checkUser.IsSuccessStatusCode)
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/users/register", new RegisterUser
+                {
+                    Email = "integration@test.com",
+                    Password = "zaq1@WSX",
+                    FullName = "integration test",
+                    UserName = "integ",
+                    PhoneNumber = "123123123",
+                    IsReceptionist = true
+                });
+
+                registerResponse = await response.Content.ReadAsAsync<Result<string>>();
+
+                return registerResponse.Data;
+            }
+            registerResponse = await checkUser.Content.ReadAsAsync<Result<string>>();
+
+            return registerResponse.Data;
         }
 
         protected void Seeder(BilleSpaceDbContext appContext)
@@ -74,6 +101,17 @@ namespace BilleSpace.IntegrationTests
             City city = new City() { Id = Guid.Parse("30bad866-aadf-4cac-9195-74b5874b6876"), Name = "Olsztyn", Country = country };
             appContext.Cities.Add(city);
 
+            User user = new User()
+            {
+                Id = "469f41f5-0b77-4b25-a158-ddec103f2aca",
+                Email = "integration@test.com",
+                PasswordHash = "zaq1@WSX",
+                FullName = "integration test",
+                UserName = "integ",
+                PhoneNumber = "123123123",
+                IsReceptionist = true
+            };
+
             appContext.Offices.Add(new Office()
             {
                 Id = Guid.Parse("e15ff775-3a89-4f0e-a037-78bf1c7b0d8c"),
@@ -81,7 +119,7 @@ namespace BilleSpace.IntegrationTests
                 PostCode = "12-123",
                 CityId = city.Id,
                 City = city,
-                AuthorNameIdentifier = "Zdzisiek",
+                Creator = user,
                 OfficeMapUrl = null,
                 OfficeZones = new List<OfficeZone>() { new OfficeZone() { Id = Guid.Parse("b2a24a75-5b26-456a-aa1d-f02821be6d4a"), Name = "OfficeZone", Desks = 5 } },
                 ParkingZones = new List<ParkingZone>() { new ParkingZone() { Id = Guid.Parse("c0988a2e-24f5-4a82-b4c2-3619f338a2eb"), Name = "ParkingZone", Spaces = 15 } },

@@ -7,17 +7,17 @@ using Microsoft.Extensions.Logging;
 
 namespace BilleSpace.Domain.Queries
 {
-    public class LoadOfficeQuery : IRequest<Result<OfficeModel>>
+    public class LoadOfficeDetailsQuery : IRequest<Result<OfficeModel>>
     {
         public Guid Id { get; set; }
 
-        public LoadOfficeQuery(Guid id)
+        public LoadOfficeDetailsQuery(Guid id)
         {
             Id = id;
         }
     }
 
-    public class LoadOfficeQueryHandler : IRequestHandler<LoadOfficeQuery, Result<OfficeModel>>
+    public class LoadOfficeQueryHandler : IRequestHandler<LoadOfficeDetailsQuery, Result<OfficeModel>>
     {
         private readonly BilleSpaceDbContext _dbContext;
         private readonly ILogger<LoadOfficeQueryHandler> _logger;
@@ -29,7 +29,7 @@ namespace BilleSpace.Domain.Queries
             _logger.LogInformation($"[{DateTime.UtcNow}] Object '{nameof(LoadOfficeQueryHandler)}' has been created.");
         }
 
-        public async Task<Result<OfficeModel>> Handle(LoadOfficeQuery request, CancellationToken cancellationToken)
+        public async Task<Result<OfficeModel>> Handle(LoadOfficeDetailsQuery request, CancellationToken cancellationToken)
         {
             var officeQuery = _dbContext.Offices
                 .Include(cit => cit.City)

@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
@@ -22,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\BilleSpace.Domain\BilleSpace.Domain.csproj" />
     <ProjectReference Include="..\BilleSpace.Infrastructure\BilleSpace.Infrastructure.csproj" />
-    <ProjectReference Include="..\BilleSpace.UnitTests\BilleSpace.UnitTests.csproj" />
     <ProjectReference Include="..\BilleSpace\BilleSpace.csproj" />
   </ItemGroup>
 
