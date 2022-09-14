@@ -24,16 +24,16 @@ namespace BilleSpace.Domain.Commands.Reservations
         public string? UserId { get; set; }
     }
 
-    public class MakeReservationCommandHandler : IRequestHandler<ManageReservationCommand, Result<ReservationModel>>
+    public class ManageReservationCommandHandler : IRequestHandler<ManageReservationCommand, Result<ReservationModel>>
     {
         private readonly BilleSpaceDbContext _dbContext;
-        private readonly ILogger<MakeReservationCommandHandler> _logger;
+        private readonly ILogger<ManageReservationCommandHandler> _logger;
 
-        public MakeReservationCommandHandler(BilleSpaceDbContext dbContext, ILogger<MakeReservationCommandHandler> logger)
+        public ManageReservationCommandHandler(BilleSpaceDbContext dbContext, ILogger<ManageReservationCommandHandler> logger)
         {
             _dbContext = dbContext;
             _logger = logger;
-            _logger.LogInformation($"[{DateTime.UtcNow}] Object '{nameof(MakeReservationCommandHandler)}' has been created.");
+            _logger.LogInformation($"[{DateTime.UtcNow}] Object '{nameof(ManageReservationCommandHandler)}' has been created.");
         }
 
         public async Task<Result<ReservationModel>> Handle(ManageReservationCommand request, CancellationToken cancellationToken)
